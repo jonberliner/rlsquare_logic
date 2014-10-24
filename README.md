@@ -11,9 +11,7 @@
 ##example:
 ```
 from rlsquare_logic.rlobjects import RLSquare
-from rlsquare_logic.actionFcns import egreedy
-from rlsquare_logic.learningFcn import qLearning
-rlsl = RLSquare(stateSpace, egreedy, qLearning, initVal=0.)
-rlsl.condition(db_observations)
-rlSquareParams = rlsl.sample()
+rlsl = RLSquare()  #  init RLSquare
+rlsl.condition(observations)  #  condition on observations
+rlSquareParams = rlsl.sample()  #  return params for your ultimate RLSquare!
 ```
