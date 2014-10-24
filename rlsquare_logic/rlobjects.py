@@ -6,11 +6,16 @@ RGB1 = np.tile(np.linspace(0, 1, NCHANNELOPTIONS), [3, 1])
 RGB2 = np.tile(np.linspace(0., 1., NCHANNELOPTIONS), [3, 1])
 
 class RLObject(object):
-    def __init__(self, stateSpace, actionFcn, learningRule, initValue=0.):
+    def __init__(self, stateSpace, actionFcn, learningFcn, initValue=0.):
         self._stateSpace = stateSpace
         self.value = initValue
         self.actionFcn = actionFcn
         self.learningRule = learningRule
+
+    def choose(self):
+        ichoice = {k: self.actionFcn(v) for k, v in self.stateSpace.iteritems()}
+        params = {k: self.stateSpace[k][i] for k, i in ichoice.iteritems()}
+        return params
 
     # stateSpace has no setter because cannot change after initialization
     @property
