@@ -59,12 +59,10 @@ class RLObject(object):
                         assert v.shape == self.stateSpace[k].shape
                         self._value[k] = v
 
-            # FIXME: learn how to give proper error messages in python
             except:
-                msg = """\nERROR!:\n\
-    value keys must match stateSpace keys, and be of
-    the same size and shape as the state spaces matching each.
-    Enter a scalar if you want to set a field to uniform value
-    that matches state-space-field size\
-                      """
-                print msg
+                raise ValueError("""\
+value keys must match stateSpace keys, and be of
+the same size and shape as the state spaces matching each.
+Enter a scalar if you want to set a field to uniform value
+that matches state-space-field size\
+""")
