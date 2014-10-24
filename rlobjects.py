@@ -12,6 +12,7 @@ class RLObject(object):
         self.actionFcn = actionFcn
         self.learningRule = learningRule
 
+    # stateSpace has no setter because cannot change after initialization
     @property
     def stateSpace(self):
         return self._stateSpace
@@ -22,7 +23,7 @@ class RLObject(object):
 
     @actionFcn.setter
     def actionFcn(self, fcn):
-        assert callable(fcn)
+        assert callable(fcn), "actionFcn must be a function"
         self._actionFcn = fcn
 
     @property
@@ -31,7 +32,7 @@ class RLObject(object):
 
     @learningFcn.setter
     def learningFcn(self, fcn):
-        assert callable(fcn)
+        assert callable(fcn), "learningFcn must be a function"
         self._learningFcn = fcn
 
     @property
@@ -47,22 +48,16 @@ class RLObject(object):
             for k in self.stateSpace:
                 self._value[k] = np.ones_like(self.stateSpace[k]) * value
         else:
-            try:
-                # you can set specfic fields of the statespace
-                assert set(value.keys()).issubset(set(self.stateSpace.keys()))
-                for k, v in value.iteritems():
-                    # set value of all states of stateSpace field k to v
-                    if np.isscalar(v):
-                        self._value[k] = np.ones_like(self.stateSpace[k]) * v
-                    # set values of states in stateSpace field k to those in v
-                    else:
-                        assert v.shape == self.stateSpace[k].shape
-                        self._value[k] = v
-
-            except:
-                raise ValueError("""\
-value keys must match stateSpace keys, and be of
-the same size and shape as the state spaces matching each.
-Enter a scalar if you want to set a field to uniform value
-that matches state-space-field size\
-""")
+            # you can set specfic fields of the statespace
+            assert set(value.keys()).issubset(set(self.stateSpace.keys())),\
+                    "value keys being set must be in stateSpace keys"
+            for k, v in value.iteritems():
+                # set value of all states of stateSpace field k to v
+                if np.isscalar(v):
+                    self._value[k] = np.ones_like(self.stateSpace[k]) * v
+                # set values of states in stateSpace field k to those in v
+                else:
+                    assert v.shape == self.stateSpace[k].shape,\
+                        ("if value['key'] is not a scalar, "
+                         "must be same size as self.stateSpace[key]")
+                    self._value[k] = v
