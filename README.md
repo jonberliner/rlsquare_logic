@@ -1,7 +1,13 @@
 #RLSquare Logic!
 ##contains:
 - action selection functions library
-- an RL object class (only initializes so far)
+- learning rule functions library
+- an RL object class that:
+    - trains on state-reward pairs
+    - generates value-weighted random samples
+- an RLSquare object subclass that:
+    - has fixed RLObject statespace
+    - has presets for learningFunction, actionFunction, values
 
 ##will contain:
 - learning functions library
