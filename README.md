@@ -9,10 +9,6 @@
     - has fixed RLObject statespace
     - has presets for learningFunction, actionFunction, values
 
-##will contain:
-- learning functions library
-- training methods in RL objects
-- RLSquare subclass
 
 ##example:
 ```
