@@ -11,7 +11,19 @@
 ##example:
 ```
 from rlsquare_logic.rlobjects import RLSquare
-rlsl = RLSquare()  #  init RLSquare
-rlsl.condition(observations)  #  condition on observations
-rlSquareParams = rlsl.sample()  #  return params for your ultimate RLSquare!
+from numpy.random import rand
+nSamples = 100
+
+#  init RLSquare
+rlsquare = RLSquare()
+
+# generate some random state-reward pairs
+randomStateParams = [rlsquare.sample() for _ in xrange(nSamples)]
+randomStateRewards = [rand(nSamples) for _ in xrange(nSamples)]
+
+# condition on state-reward pairs
+rlsquare.condition(randomStateParams, randomStateRewards)
+
+#  return params for your ultimate RLSquare!
+conditionedRLSquareParams = rlsquare.sample()
 ```
