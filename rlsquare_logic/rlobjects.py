@@ -1,32 +1,48 @@
-from numpy import isscalar, isvector, ones_like, linspace
+from numpy import isscalar, ones_like, linspace, where
 from actionFunctions import softmax_builder
 from learningFunctions import td0_builder
+import pdb
 
-
-
+# TODO: finish gaussian process rl object
 # class GPObject(object):
 #     def __init__(self, aquisitionFunction, priorMu, priorCovmat):
 #         self.stateSpace =
 #         if not priorMu:
 
-
 class RLObject(object):
+    # TODO: add documentation
     def __init__(self, stateSpace, actionFunction, learningFunction, initValue=0.):
         for k, v in stateSpace.iteritems():
-            assert isvector(v), "all fields in stateSpace must be vectors"
+            assert v.ndim == 1, "all fields in stateSpace must be vectors"
         self._stateSpace = stateSpace
         self.value = initValue
         self.actionFunction = actionFunction
         self.learningFunction = learningFunction
 
     def sample(self):
-        ichoice = {k: self.actionFunction(v) for k, v in self.values.iteritems()}
+        ichoice = {k: self.actionFunction(v) for k, v in self.value.iteritems()}
         params = {k: self.stateSpace[k][i] for k, i in ichoice.iteritems()}
         return params
 
-    def condition(self, action, reward):
-        for k, v in self.value.iteritems():
-            self.value[k] = self.learningFunction(v, action, reward)
+    # FIXME: vectorize condition so doesn't need to call _conditionOnOne a lot
+    def _conditionOnOne(self, state, reward):
+        assert set(state.keys()) == set(self.stateSpace.keys()),\
+            "state keys must match RLObject.stateSpace keys"
+        for field, v in state.iteritems():
+            try:
+                i = where(self.stateSpace[field]==v)[0][0]  # get index of state
+            except:
+                raise ValueError("state instance must be in RLObject.stateSpace")
+
+            self._value[field][i] =\
+                self.learningFunction(self.value[field][i], reward)
+
+    def condition(self, states, rewards):
+        assert type(states) is list,\
+            "states must be a list of dicts with keys matching self.stateSpace"
+        assert type(rewards) is list, "rewards must be a list of scalars"
+        [self._conditionOnOne(states[i], rewards[i])
+            for i in xrange(len(states))]
 
     # stateSpace has no setter because cannot change after initialization
     @property
@@ -88,8 +104,8 @@ class RLSquare(RLObject):
         colorChannels = {'h1', 's1', 'v1', 'h2', 's2', 'v2'}
         stateSpace = {}
         for cc in colorChannels:
-            stateSpace[cc] = linspace(0, 255, 17)[1:]
-        stateSpace['oscTime'] = linspace(0, 16000, 17)[1:]
+            stateSpace[cc] = linspace(0, 255, 16)
+        stateSpace['oscTime'] = linspace(0, 8000, 17)[1:]
         stateSpace['sigSteepness'] = linspace(0, 4, 17)[1:]
         RLObject.__init__(self, stateSpace, actionFunction, learningFunction,
                           initValue)
