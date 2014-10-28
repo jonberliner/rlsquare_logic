@@ -40,7 +40,8 @@ class RLObject(object):
     def condition(self, states, rewards):
         assert type(states) is list,\
             "states must be a list of dicts with keys matching self.stateSpace"
-        assert type(rewards) is list, "rewards must be a list of scalars"
+        assert (type(rewards) is list or rewards.ndim==1),\
+                "rewards must be a list of scalars or a 1dim numpy array"
         [self._conditionOnOne(states[i], rewards[i])
             for i in xrange(len(states))]
 

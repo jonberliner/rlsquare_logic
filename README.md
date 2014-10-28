@@ -21,7 +21,8 @@ rlsquare = RLSquare()
 
 # generate some random state-reward pairs
 randomStateParams = [rlsquare.sample() for _ in xrange(nSamples)]
-randomStateRewards = rand(nSamples).tolist()
+# randomStateRewards = rand(nSamples).tolist()
+randomStateRewards = rand(nSamples)
 
 # condition on state-reward pairs
 rlsquare.condition(randomStateParams, randomStateRewards)
